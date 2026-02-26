@@ -13,15 +13,6 @@ const site = 'https://cs2caseodds.com';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MMGWXD5PYW"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-MMGWXD5PYW');
-</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>{title}</title>
 <meta name="description" content={description}>
@@ -97,6 +88,7 @@ td{font-size:15px}
   <a href="/expected-value/" class:list={[{ active: currentNav === '/expected-value/' }]}>Expected Value</a>
   <a href="/cs2-case-roi/" class:list={[{ active: currentNav === '/cs2-case-roi/' }]}>ROI</a>
   <a href="/best-cases-to-open/" class:list={[{ active: currentNav === '/best-cases-to-open/' }]}>Best Cases</a>
+  <a href="/case-simulator/" class:list={[{ active: currentNav === '/case-simulator/' }]}>Simulator</a>
 </nav></header>
 <main><div class="container">
 <slot />

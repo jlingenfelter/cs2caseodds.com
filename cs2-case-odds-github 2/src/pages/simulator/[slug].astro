@@ -1,0 +1,133 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE, ODDS, faqSchema, breadcrumbSchema } from '../../lib/data';
+import { SIM_CASES, RARITY_COLORS, RARITY_NAMES } from '../../lib/skins';
+
+export function getStaticPaths() {
+  return SIM_CASES.map(c => ({ params: { slug: c.slug }, props: { simCase: c } }));
+}
+
+const { simCase } = Astro.props;
+const title = `Open ${simCase.name} - Free CS2 Case Simulator | CS2CaseOdds`;
+const desc = `Open ${simCase.name} for free with realistic odds. Roulette animation and quick-open modes. Track your drop stats. ${simCase.skins.length} skins including knives and gloves.`;
+const canonical = `/simulator/${simCase.slug}/`;
+const faqs: [string,string][] = [
+  [`What skins are in the ${simCase.name}?`, `The ${simCase.name} contains ${simCase.skins.length} skins across all rarities from Mil-Spec (blue) to Covert (red) plus Knife/Gloves (gold).`],
+  [`What are the odds of getting a knife from ${simCase.name}?`, `The knife/gloves drop rate is 0.26% per case opened, which equals roughly 1 in 385 cases. This is the same for all CS2 cases.`],
+  ['Is this simulator rigged?', 'No, the simulator uses a cryptographically standard random number generator with the official CS2 drop rate weights. Over many opens, your results will converge to the expected percentages.'],
+];
+const faq = faqSchema(faqs);
+const bc = breadcrumbSchema([['Home', '/'], ['Case Simulator', '/case-simulator/'], [simCase.name]]);
+const caseJSON = JSON.stringify({ name: simCase.name, slug: simCase.slug, skins: simCase.skins });
+const others = SIM_CASES.filter(c => c.slug !== simCase.slug).slice(0, 6);
+---
+<Base title={title} description={desc} canonical={canonical} extraHead={`<script type="application/ld+json">${faq}</script><script type="application/ld+json">${bc}</script>`}>
+<div class="container">
+<main>
+
+<div class="breadcrumbs"><a href="/">Home</a> <span>›</span> <a href="/case-simulator/">Case Simulator</a> <span>›</span> {simCase.name}</div>
+<h1>Open {simCase.name}</h1>
+<p>Open the {simCase.name} for free with realistic drop rates. Choose roulette animation for the classic experience or quick-open for rapid unboxing.</p>
+
+<script type="application/json" id="sim-data" set:html={caseJSON}></script>
+
+<div id="sim-app">
+  <!-- Mode Toggle -->
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button data-mode="roulette" class="active" style="padding:8px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-weight:600;cursor:pointer;font-size:14px;transition:all 0.2s">Roulette</button>
+    <button data-mode="quick" style="padding:8px 20px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-weight:600;cursor:pointer;font-size:14px;transition:all 0.2s">Quick Open</button>
+  </div>
+
+  <!-- Roulette Mode -->
+  <div id="roulette-container">
+    <div class="card" style="padding:0;overflow:hidden;position:relative">
+      <div id="roulette-window" style="overflow:hidden;position:relative;height:100px">
+        <!-- Center marker -->
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:100%;background:var(--gold);z-index:10"></div>
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid var(--gold);z-index:10"></div>
+        <div id="roulette-strip" style="display:flex;position:relative;will-change:transform">
+          <div style="display:flex;align-items:center;justify-content:center;width:100%;height:100px;color:var(--text2)">Click "Open Case" to start</div>
+        </div>
+      </div>
+    </div>
+    <div id="result-display" style="display:none;text-align:center;padding:16px;margin:12px 0;background:var(--surface);border:2px solid var(--border);border-radius:8px"></div>
+  </div>
+
+  <!-- Quick Open Mode -->
+  <div id="quick-container" style="display:none">
+    <div class="card" style="min-height:120px;display:flex;align-items:center;justify-content:center">
+      <div id="quick-result" style="text-align:center;color:var(--text2)">Click "Open Case" to start</div>
+    </div>
+  </div>
+
+  <!-- Multi-open results -->
+  <div id="multi-results" style="display:none;flex-wrap:wrap;gap:8px;margin:12px 0"></div>
+
+  <!-- Buttons -->
+  <div style="display:flex;gap:8px;margin:16px 0;flex-wrap:wrap">
+    <button id="btn-open" style="padding:12px 28px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;font-size:16px;cursor:pointer;transition:opacity 0.2s">Open Case</button>
+    <button id="btn-open-5" style="padding:12px 20px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:600;font-size:14px;cursor:pointer">Open x5</button>
+    <button id="btn-open-10" style="padding:12px 20px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:600;font-size:14px;cursor:pointer">Open x10</button>
+    <button id="btn-reset" style="padding:12px 20px;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:8px;font-weight:500;font-size:14px;cursor:pointer;margin-left:auto">Reset Stats</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="card">
+    <h2 style="margin-top:0">Your Stats</h2>
+    <div id="sim-stats"><p style="color:var(--text2)">Open cases to start tracking stats.</p></div>
+  </div>
+
+  <!-- History -->
+  <div id="sim-history" style="margin:16px 0"></div>
+
+  <!-- Case Contents -->
+  <div class="card">
+    <h2 style="margin-top:0">{simCase.name} Contents</h2>
+    <div id="case-contents"></div>
+  </div>
+</div>
+
+<div style="margin-top:32px">
+  <h2>{simCase.name} FAQ</h2>
+  {faqs.map(([q,a]) => (
+    <details style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:var(--surface)">
+      <summary style="padding:16px;cursor:pointer;font-weight:600">{q}</summary>
+      <div style="padding:0 16px 16px;color:var(--text2)">{a}</div>
+    </details>
+  ))}
+</div>
+
+<div style="margin-top:32px">
+  <h3>Open Other Cases</h3>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+    {others.map(c => (
+      <a href={`/simulator/${c.slug}/`} style="padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text2)">{c.name}</a>
+    ))}
+    <a href="/case-simulator/" style="padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--accent)">View All Cases →</a>
+  </div>
+</div>
+
+</main>
+</div>
+
+<style is:inline>
+.roulette-item{min-width:120px;height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--border);flex-shrink:0}
+.ri-color{font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:4px}
+.ri-name{font-size:13px;color:var(--text);font-weight:500}
+.quick-reveal{transition:all 0.3s;opacity:0;transform:scale(0.8)}
+.quick-reveal.revealed{opacity:1;transform:scale(1)}
+.qr-flash{position:absolute;inset:0;opacity:0.3;border-radius:8px;animation:flash 0.4s ease-out}
+.qr-rarity{font-size:14px;font-weight:700;margin-bottom:4px}
+.qr-weapon{font-size:20px;font-weight:700;color:var(--text)}
+.qr-name{font-size:14px;color:var(--text2)}
+@keyframes flash{from{opacity:0.6}to{opacity:0}}
+.multi-item{padding:8px 12px;background:var(--surface);border:2px solid;border-radius:8px;text-align:center;min-width:120px;flex-shrink:0}
+.multi-rarity{font-size:10px;font-weight:700;color:#000;padding:1px 6px;border-radius:3px;display:inline-block;margin-bottom:4px}
+.multi-weapon{font-size:13px;font-weight:600;color:var(--text)}
+.multi-name{font-size:12px;color:var(--text2)}
+[data-mode].active{background:var(--surface2);color:var(--text);border-color:var(--accent)}
+#btn-open:hover{opacity:0.85}
+</style>
+
+<script is:inline src="/simulator.js"></script>
+</Base>

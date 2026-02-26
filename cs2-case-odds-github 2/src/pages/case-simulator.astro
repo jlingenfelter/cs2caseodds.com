@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, CASES, ODDS, faqSchema, breadcrumbSchema } from '../lib/data';
+import { SIM_CASES } from '../lib/skins';
+const title = 'CS2 Case Opening Simulator - Free Online Case Opener | CS2CaseOdds';
+const desc = 'Free CS2 case opening simulator with realistic roulette animation and quick-open mode. Open cases with real odds, track your stats, and test your luck without spending real money.';
+const faqs: [string,string][] = [
+  ['Is this case simulator free?','Yes, this CS2 case opening simulator is completely free. No real money is involved and no registration is required. It uses the same odds as real CS2 cases.'],
+  ['Does this use real CS2 case odds?','Yes, the simulator uses the official CS2 drop rates: 79.92% Mil-Spec, 15.98% Restricted, 3.20% Classified, 0.64% Covert, and 0.26% Knife/Gloves.'],
+  ['Can I win real skins from this simulator?','No, this is a simulation only. No real skins or items are involved. It is designed to help you understand drop rates and satisfy curiosity without financial risk.'],
+  ['What is the difference between roulette and quick open?','Roulette mode shows the classic spinning animation that slows down and lands on your skin. Quick open mode instantly reveals the result with a flash animation for faster opening.'],
+];
+const faq = faqSchema(faqs);
+const bc = breadcrumbSchema([['Home', '/'], ['Case Simulator']]);
+---
+<Base title={title} description={desc} canonical="/case-simulator/" extraHead={`<script type="application/ld+json">${faq}</script><script type="application/ld+json">${bc}</script>`}>
+<div class="container">
+<main>
+
+<div class="breadcrumbs"><a href="/">Home</a> <span>›</span> Case Simulator</div>
+<h1>CS2 Case Opening Simulator</h1>
+<p>Open CS2 cases for free with realistic odds. Choose between the classic roulette animation or instant quick-open mode. Track your stats and see how your luck compares to expected drop rates. No real money required.</p>
+
+<h2>Choose a Case to Open</h2>
+<p>Select a case below to start opening. Each case uses the official CS2 drop rates and contains the actual skins from that case.</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:20px 0">
+  {SIM_CASES.map(c => (
+    <a href={`/simulator/${c.slug}/`} style="text-decoration:none">
+      <div class="card" style="padding:16px;text-align:center;transition:border-color 0.2s;cursor:pointer">
+        <div style="font-size:32px;margin-bottom:8px">📦</div>
+        <h3 style="margin:0 0 4px;font-size:16px;color:var(--text)">{c.name}</h3>
+        <div style="font-size:13px;color:var(--text2)">{c.skins.length} skins</div>
+        <div style="margin-top:8px;display:flex;gap:3px;justify-content:center">
+          <span style="width:8px;height:8px;border-radius:50%;background:#4b69ff" title="Mil-Spec"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:#8847ff" title="Restricted"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:#d32ce6" title="Classified"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:#eb4b4b" title="Covert"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:#ffd700" title="Gold"></span>
+        </div>
+      </div>
+    </a>
+  ))}
+</div>
+
+<h2>How the Simulator Works</h2>
+<p>This simulator replicates the exact drop rates used in real CS2 case openings. Every virtual case open uses a random number generator with the official probability weights: {(ODDS.milspec * 100).toFixed(2)}% for Mil-Spec (blue), {(ODDS.restricted * 100).toFixed(2)}% for Restricted (purple), {(ODDS.classified * 100).toFixed(2)}% for Classified (pink), {(ODDS.covert * 100).toFixed(2)}% for Covert (red), and {(ODDS.gold * 100).toFixed(2)}% for Knife/Gloves (gold).</p>
+<p>The roulette animation is purely visual — the result is determined the instant you click open, and the animation simply lands on that predetermined result. This matches how the real CS2 case opening works.</p>
+
+<h2>Why Use a Case Simulator?</h2>
+<p>Opening real CS2 cases costs money ($2.49 per key) and is statistically unprofitable. The expected value of an average case opening is negative, meaning you lose money on average. This simulator lets you experience the excitement of case openings and understand the odds without any financial risk. It is also useful for content creators who want to simulate openings for videos or streams.</p>
+
+<div style="margin-top:32px">
+  <h2>Simulator FAQ</h2>
+  {faqs.map(([q,a]) => (
+    <details style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:var(--surface)">
+      <summary style="padding:16px;cursor:pointer;font-weight:600">{q}</summary>
+      <div style="padding:0 16px 16px;color:var(--text2)">{a}</div>
+    </details>
+  ))}
+</div>
+
+<div style="margin-top:32px">
+  <h3>Related Tools</h3>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+    <a href="/" style="padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text2)">Case Odds Calculator</a>
+    <a href="/case-odds/" style="padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text2)">Case Odds Guide</a>
+    <a href="/knife-odds/" style="padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text2)">Knife Odds</a>
+    <a href="/best-cases-to-open/" style="padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text2)">Best Cases to Open</a>
+  </div>
+</div>
+
+</main>
+</div>
+</Base>
