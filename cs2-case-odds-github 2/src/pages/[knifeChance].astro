@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import { ODDS, KNIFE_COUNTS, knifeProb, expected, faqSchema, breadcrumbSchema } from '../lib/data';
+
+export function getStaticPaths() {
+  return KNIFE_COUNTS.map(n => ({
+    params: { knifeChance: `knife-chance-${n}-cases` },
+    props: { n }
+  }));
+}
+
+const { n } = Astro.props;
+const prob = knifeProb(n);
+const noKnife = (100 - prob).toFixed(2);
+const casesFor50 = Math.ceil(Math.log(0.5) / Math.log(1 - ODDS.gold));
+
+const faqs: [string, string][] = [
+  [`What is the chance of getting a knife in ${n} CS2 cases?`, `The probability of getting at least one knife in ${n} CS2 cases is ${prob.toFixed(2)}%. This is calculated using P = 1 - (1 - 0.0026)^${n}.`],
+  [`Is ${n} cases enough for a knife?`, `${n} cases gives you a ${prob.toFixed(2)}% chance. ${prob > 50 ? 'You have better than even odds but it is not guaranteed.' : 'You are more likely to not get a knife than to get one.'}`],
+];
+---
+<Base title={`Chance of Getting a Knife in ${n} CS2 Cases — ${prob.toFixed(2)}%`} description={`Calculate your probability of getting a knife in ${n} CS2 cases using real drop rates. ${prob.toFixed(2)}% chance with exact calculations.`} canonical={`/knife-chance-${n}-cases/`} currentNav="/knife-odds/" extraHead={`<script type="application/ld+json">${faqSchema(faqs)}</script>`}>
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><a href="/knife-odds/">Knife Odds</a><span>›</span><span>{n} Cases</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Knife Odds', '/knife-odds/'], [`${n} Cases`]])}</script>`} />
+
+<h1>Chance of Getting a Knife in {n} CS2 Cases</h1>
+<p>If you open {n} CS2 cases, you have a <strong>{prob.toFixed(2)}%</strong> chance of receiving at least one knife or pair of gloves. This means there is a {noKnife}% chance you will open {n} cases and receive no knife at all.</p>
+
+<div class="stat-row">
+<div class="stat-card"><div class="num rarity-gold">{prob.toFixed(2)}%</div><div class="desc">Knife Chance</div></div>
+<div class="stat-card"><div class="num">{noKnife}%</div><div class="desc">No Knife</div></div>
+<div class="stat-card"><div class="num">{expected(n, ODDS.covert)}</div><div class="desc">Expected Coverts</div></div>
+<div class="stat-card"><div class="num">{expected(n, ODDS.classified)}</div><div class="desc">Expected Classifieds</div></div>
+</div>
+
+<h2>Expected Drops from {n} Cases</h2>
+<table><thead><tr><th>Rarity</th><th>Expected Count</th><th>Probability</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec</td><td>{expected(n, ODDS.milspec)}</td><td>79.92% each</td></tr>
+<tr><td class="rarity-restricted">Restricted</td><td>{expected(n, ODDS.restricted)}</td><td>15.98% each</td></tr>
+<tr><td class="rarity-classified">Classified</td><td>{expected(n, ODDS.classified)}</td><td>3.20% each</td></tr>
+<tr><td class="rarity-covert">Covert</td><td>{expected(n, ODDS.covert)}</td><td>0.64% each</td></tr>
+<tr><td class="rarity-gold">Knife/Gloves</td><td>{expected(n, ODDS.gold)}</td><td>0.26% each</td></tr>
+</tbody></table>
+
+<h2>How This Is Calculated</h2>
+<p>The probability of getting at least one knife in {n} cases uses the complement formula: P = 1 - (1 - 0.0026)^{n} = 1 - {Math.pow(1 - ODDS.gold, n).toFixed(6)} = {(prob / 100).toFixed(4)} = {prob.toFixed(2)}%.</p>
+<p>This formula works because it calculates the probability of NOT getting a knife {n} times in a row (which is (1 - 0.0026)^{n}), and then subtracts that from 1 to get the probability of getting at least one knife.</p>
+{prob < 50 ? (
+  <p>With {n} cases, you are more likely to receive no knife than to receive one. You would need approximately {casesFor50} cases for a 50% chance.</p>
+) : (
+  <p>With {n} cases, you have better than even odds of receiving at least one knife. However, a {noKnife}% chance of no knife is still substantial and should be expected as a realistic outcome.</p>
+)}
+
+<h2>Calculator</h2>
+<Calculator type="odds" />
+
+<h2>Compare Other Amounts</h2>
+<div class="link-grid">
+{KNIFE_COUNTS.filter(k => k !== n).map(k => <a href={`/knife-chance-${k}-cases/`}>{k} cases → {knifeProb(k).toFixed(2)}%</a>)}
+</div>
+
+<h2>Frequently Asked Questions</h2>
+{faqs.map(f => <div class="faq-item"><h3>{f[0]}</h3><p>{f[1]}</p></div>)}
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

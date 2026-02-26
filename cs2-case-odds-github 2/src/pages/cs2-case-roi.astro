@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import { CASES, ODDS, knifeProb, expected, breadcrumbSchema } from '../lib/data';
+const counts = [10, 50, 100, 500, 1000];
+---
+<Base title="CS2 Case ROI — Return on Investment Guide" description="Understand CS2 case ROI. Calculate return on investment for opening cases with real probability data." canonical="/cs2-case-roi/" currentNav="/cs2-case-roi/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>ROI</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['ROI']])}</script>`} />
+
+<h1>CS2 Case ROI — Return on Investment Guide</h1>
+<p>ROI (Return on Investment) measures the percentage return relative to your total spending. For CS2 cases, ROI is consistently negative, meaning players lose money on average. This page explains how ROI works for case openings and provides tools to calculate your expected returns.</p>
+
+<Calculator type="ev" />
+
+<h2>What Is Case ROI?</h2>
+<p>ROI is calculated as: ROI = ((Return - Cost) / Cost) × 100%. If you spend $100 opening cases and receive $35 in skin value, your ROI is -65%. This means you lost 65 cents for every dollar spent. Across the entire CS2 player base, the average ROI for case openings is approximately -60% to -70%.</p>
+
+<h2>Why ROI Is Negative</h2>
+<p>CS2 case ROI is negative because the system is designed to generate revenue for Valve and the skin economy. The 79.92% probability of receiving a Mil-Spec item worth far less than the opening cost ensures that the average return is well below the cost. Only the rare high-value drops from the covert and gold tiers can push an individual session into profitable territory.</p>
+
+<h2>ROI by Number of Cases</h2>
+<p>The more cases you open, the more closely your results will converge toward the expected negative ROI. In small sample sizes (10-50 cases), variance is high and some players will profit. In large sample sizes (500+ cases), nearly all players will show a significant net loss.</p>
+<table><thead><tr><th>Cases</th><th>Knife Chance</th><th>No Knife</th><th>Expected Coverts</th></tr></thead>
+<tbody>{counts.map(n => <tr><td>{n}</td><td>{knifeProb(n).toFixed(2)}%</td><td>{(100 - knifeProb(n)).toFixed(2)}%</td><td>{expected(n, ODDS.covert)}</td></tr>)}</tbody></table>
+
+<h2>Case ROI Pages</h2>
+<div class="link-grid">
+{CASES.slice(0, 20).map(c => <a href={`/roi/${c.slug}/`}>{c.name} ROI</a>)}
+</div>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

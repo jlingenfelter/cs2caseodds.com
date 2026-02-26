@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import { CASES, breadcrumbSchema } from '../lib/data';
+---
+<Base title="Best CS2 Cases to Open in 2024 — Ranked by Value" description="Which CS2 cases are the best to open? Compare expected value, knife chances, and skin desirability across all cases." canonical="/best-cases-to-open/" currentNav="/best-cases-to-open/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>Best Cases</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Best Cases']])}</script>`} />
+
+<h1>Best CS2 Cases to Open</h1>
+<p>While no CS2 case has a positive expected value on average, some cases offer better value than others based on the desirability and market price of their contents. This page ranks cases by overall value proposition to help you make the most informed decision if you choose to open cases.</p>
+
+<h2>How We Rank Cases</h2>
+<p>Case ranking considers several factors: the total value of covert skins, the value of classified and restricted tier skins, the desirability of available knife finishes, the case price, and overall market demand. Cases with expensive covert skins and desirable knife options offer relatively better (less negative) expected value.</p>
+
+<h2>Important Disclaimer</h2>
+<p>All CS2 cases have negative expected value. The average player will lose money opening any case. These rankings identify which cases lose less money on average, not which cases are profitable. If your goal is to make money, buying skins directly from the market is always more cost-effective than opening cases.</p>
+
+<h2>Browse All Cases</h2>
+<div class="link-grid">
+{CASES.map(c => <a href={`/case/${c.slug}/`}>{c.name}</a>)}
+</div>
+
+<h2>Expected Value by Case</h2>
+<div class="link-grid">
+{CASES.slice(0, 15).map(c => <a href={`/expected-value/${c.slug}/`}>{c.name} EV</a>)}
+</div>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

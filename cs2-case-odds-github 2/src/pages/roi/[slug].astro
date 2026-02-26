@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import Calculator from '../../components/Calculator.astro';
+import { CASES, ODDS, knifeProb, expected, breadcrumbSchema } from '../../lib/data';
+
+export function getStaticPaths() {
+  return CASES.map(c => ({ params: { slug: c.slug }, props: { c } }));
+}
+
+const { c } = Astro.props;
+const counts = [10, 50, 100, 500];
+const otherCases = CASES.filter(x => x.slug !== c.slug).slice(0, 6);
+---
+<Base title={`${c.name} ROI — Return on Investment Calculator`} description={`Calculate the ROI of opening ${c.name} in CS2. Expected returns, probability tables, and profitability analysis.`} canonical={`/roi/${c.slug}/`} currentNav="/cs2-case-roi/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><a href="/cs2-case-roi/">ROI</a><span>›</span><span>{c.name}</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['ROI', '/cs2-case-roi/'], [c.name]])}</script>`} />
+
+<h1>{c.name} ROI Calculator</h1>
+<p>Calculate your expected return on investment for opening {c.name} cases. Enter current market prices to see the projected ROI across different numbers of cases.</p>
+
+<Calculator type="ev" />
+
+<h2>{c.name} Expected Returns</h2>
+<table><thead><tr><th>Cases</th><th>Knife Chance</th><th>Expected Coverts</th><th>Expected Classifieds</th></tr></thead>
+<tbody>{counts.map(n => <tr><td>{n}</td><td>{knifeProb(n).toFixed(2)}%</td><td>{expected(n, ODDS.covert)}</td><td>{expected(n, ODDS.classified)}</td></tr>)}</tbody></table>
+
+<h2>ROI Analysis</h2>
+<p>The ROI of opening {c.name} depends on the current prices of its contents. Cases with high-value covert and knife skins have relatively better (less negative) ROI, while cases with low-value contents have worse ROI. On average, expect an ROI between -60% and -70% over a large number of openings.</p>
+<p>Short-term variance means that small batches of cases can produce wildly different ROI figures. A single knife drop in 50 cases could produce positive ROI, while 200 cases without a knife will show deep negative ROI.</p>
+
+<h2>Other Case ROI Pages</h2>
+<div class="link-grid">
+{otherCases.map(x => <a href={`/roi/${x.slug}/`}>{x.name} ROI</a>)}
+</div>
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

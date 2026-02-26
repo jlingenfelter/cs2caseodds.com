@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import Calculator from '../../components/Calculator.astro';
+import { CASES, breadcrumbSchema } from '../../lib/data';
+---
+<Base title="CS2 Case Expected Value — Is Opening Cases Profitable?" description="Calculate the expected value of opening CS2 cases. Understand profitability, average returns, and why the house always wins." canonical="/expected-value/" currentNav="/expected-value/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>Expected Value</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Expected Value']])}</script>`} />
+
+<h1>CS2 Case Expected Value Guide</h1>
+<p>Expected value (EV) measures the average outcome of an action over many repetitions. For CS2 cases, EV tells you how much money you can expect to receive back for each case you open. Understanding EV is crucial for making informed decisions about case openings.</p>
+
+<Calculator type="ev" />
+
+<h2>What Is Expected Value?</h2>
+<p>Expected value is a mathematical concept that calculates the average result of a random event if it were repeated infinitely. For CS2 case openings, the EV is calculated by multiplying the probability of each possible outcome by its value and summing all results.</p>
+<p>In practical terms, the EV of a CS2 case is the average amount of money you receive back per opening. If a case costs $2.99 to open (case + key) and the EV is $1.05, you lose $1.94 on average per opening. Over 100 openings, you would expect to spend $299 and receive approximately $105 in return.</p>
+
+<h2>Why EV Is Always Negative</h2>
+<p>The expected value of every CS2 case is negative because the vast majority of drops (roughly 96%) are Mil-Spec and Restricted items worth far less than the opening cost. The rare high-value drops (coverts, knives) are too infrequent to offset the consistent losses on common drops. On average, players receive back approximately 30-40% of their opening cost.</p>
+<p>This negative EV is by design. Valve profits from the difference between opening costs and average return values. Case openings function as a form of entertainment gambling rather than an investment.</p>
+
+<h2>Case Expected Values</h2>
+<div class="link-grid">
+{CASES.slice(0, 20).map(c => <a href={`/expected-value/${c.slug}/`}>{c.name} EV</a>)}
+</div>
+
+<h2>Factors That Affect EV</h2>
+<p>Several factors influence the expected value of a specific case. The prices of individual skins within the case are the primary driver, particularly the value of the covert and classified tier skins. Cases containing highly sought-after skins in these tiers will have better EV than cases with unpopular skins. The price of the case itself also matters — cheaper cases have less negative EV since the opening cost is lower.</p>
+<p>Market conditions change constantly. A case might have relatively good EV when a new popular skin drives prices up, but that EV deteriorates as supply increases and prices fall. Always check current market prices before calculating EV.</p>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

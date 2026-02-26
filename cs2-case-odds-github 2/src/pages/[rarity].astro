@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import { ODDS, CASES, RARITIES, pct, breadcrumbSchema } from '../lib/data';
+
+export function getStaticPaths() {
+  return [
+    { params: { rarity: 'covert-odds' }, props: { name: 'Covert', color: '#eb4b4b', rate: 0.0064, odds1in: '156.25', title: 'CS2 Covert Odds — Red Skin Drop Rate Guide' }},
+    { params: { rarity: 'classified-odds' }, props: { name: 'Classified', color: '#d32ce6', rate: 0.032, odds1in: '31.25', title: 'CS2 Classified Odds — Pink Skin Drop Rate Guide' }},
+    { params: { rarity: 'restricted-odds' }, props: { name: 'Restricted', color: '#8847ff', rate: 0.1598, odds1in: '6.26', title: 'CS2 Restricted Odds — Purple Skin Drop Rate Guide' }},
+    { params: { rarity: 'milspec-odds' }, props: { name: 'Mil-Spec', color: '#4b69ff', rate: 0.7992, odds1in: '1.25', title: 'CS2 Mil-Spec Odds — Blue Skin Drop Rate Guide' }},
+  ];
+}
+
+const { name, color, rate, odds1in, title } = Astro.props;
+const counts = [10, 25, 50, 100, 250, 500, 1000];
+---
+<Base title={title} description={`Complete guide to ${name} drop rates in CS2 cases. ${pct(rate)} probability per case opening.`} canonical={`/${Astro.params.rarity}/`}>
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><a href="/case-odds/">Case Odds</a><span>›</span><span>{name}</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Case Odds', '/case-odds/'], [name]])}</script>`} />
+
+<h1>{title}</h1>
+<p>{name} items have a drop probability of {pct(rate)} in every CS2 case, which equals approximately 1 in {odds1in} cases. This rate is identical across all weapon cases.</p>
+
+<div class="stat-row">
+<div class="stat-card"><div class="num" style={`color:${color}`}>{pct(rate)}</div><div class="desc">Per Case</div></div>
+<div class="stat-card"><div class="num" style={`color:${color}`}>1 in {odds1in}</div><div class="desc">Average</div></div>
+</div>
+
+<h2>Expected {name} Items by Cases Opened</h2>
+<table><thead><tr><th>Cases</th><th>Expected {name}</th><th>Probability of 1+</th></tr></thead>
+<tbody>{counts.map(n => {
+  const exp = (n * rate).toFixed(2);
+  const prob = ((1 - Math.pow(1 - rate, n)) * 100).toFixed(2);
+  return <tr><td>{n}</td><td>{exp}</td><td>{prob}%</td></tr>;
+})}</tbody></table>
+
+<h2>How {name} Drops Work</h2>
+<p>When you open a CS2 case, the game engine randomly selects a rarity tier. If the {name.toLowerCase()} tier is selected, the game then randomly chooses one of the {name.toLowerCase()} skins available in that specific case. Each skin within the tier has an equal chance of being selected, though StatTrak versions have a roughly 10% chance of being applied to any drop.</p>
+<p>The value of {name.toLowerCase()} items varies enormously depending on the specific skin, its float value, any applied stickers, and whether it has StatTrak technology. Some {name.toLowerCase()} skins are worth very little while others command significant prices on the Steam Market.</p>
+
+<Calculator type="odds" />
+
+<h2>Complete Odds Table</h2>
+<table class="odds-table">
+<thead><tr><th>Rarity</th><th>Probability</th><th>Odds</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec (Blue)</td><td>79.92%</td><td>1 in 1.25</td></tr>
+<tr><td class="rarity-restricted">Restricted (Purple)</td><td>15.98%</td><td>1 in 6.26</td></tr>
+<tr><td class="rarity-classified">Classified (Pink)</td><td>3.20%</td><td>1 in 31.25</td></tr>
+<tr><td class="rarity-covert">Covert (Red)</td><td>0.64%</td><td>1 in 156.25</td></tr>
+<tr><td class="rarity-gold">Exceedingly Rare (Gold)</td><td>0.26%</td><td>1 in 384.6</td></tr>
+</tbody></table>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+<div class="link-grid">
+{CASES.slice(0, 10).map(c => <a href={`/case/${c.slug}/`}>{c.name} Odds</a>)}
+</div>
+</Base>

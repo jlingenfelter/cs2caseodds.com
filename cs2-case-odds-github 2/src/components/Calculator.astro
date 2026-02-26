@@ -1,0 +1,40 @@
+---
+interface Props {
+  type?: 'odds' | 'ev';
+}
+const { type = 'odds' } = Astro.props;
+---
+{type === 'odds' ? (
+<div class="calc-box">
+<h3>Case Odds Calculator</h3>
+<div class="calc-row"><div class="calc-field"><label for="case-count">Number of Cases</label><input type="number" id="case-count" min="1" max="100000" value="100"></div></div>
+<div class="result-grid" id="calc-results"></div>
+</div>
+) : (
+<div class="calc-box">
+<h3>Expected Value Calculator</h3>
+<div class="calc-row">
+<div class="calc-field"><label for="ev-case-price">Case Price ($)</label><input type="number" id="ev-case-price" step="0.01" value="0.50"></div>
+<div class="calc-field"><label for="ev-key-price">Key Price ($)</label><input type="number" id="ev-key-price" step="0.01" value="2.49"></div>
+</div>
+<div class="result-grid" id="ev-results"></div>
+</div>
+)}
+
+<script is:inline>
+const ODDS={milspec:0.7992,restricted:0.1598,classified:0.032,covert:0.0064,gold:0.0026};
+function calcExpected(n){return{milspec:(n*ODDS.milspec).toFixed(2),restricted:(n*ODDS.restricted).toFixed(2),classified:(n*ODDS.classified).toFixed(3),covert:(n*ODDS.covert).toFixed(4),gold:(n*ODDS.gold).toFixed(4),knifeProb:((1-Math.pow(1-ODDS.gold,n))*100).toFixed(2),covertProb:((1-Math.pow(1-ODDS.covert,n))*100).toFixed(2)};}
+function initCalc(){
+  const input=document.getElementById('case-count'),results=document.getElementById('calc-results');
+  if(!input||!results)return;
+  function update(){const n=parseInt(input.value)||0;if(n<1){results.innerHTML='<p style="color:var(--text2);text-align:center">Enter number of cases above</p>';return;}const r=calcExpected(n);results.innerHTML=`<div class="result-item"><div class="val" style="color:#4b69ff">${r.milspec}</div><div class="lbl">Mil-Spec</div></div><div class="result-item"><div class="val" style="color:#8847ff">${r.restricted}</div><div class="lbl">Restricted</div></div><div class="result-item"><div class="val" style="color:#d32ce6">${r.classified}</div><div class="lbl">Classified</div></div><div class="result-item"><div class="val" style="color:#eb4b4b">${r.covert}</div><div class="lbl">Covert</div></div><div class="result-item gold"><div class="val">${r.gold}</div><div class="lbl">Knife/Gloves</div></div><div class="result-item green"><div class="val">${r.knifeProb}%</div><div class="lbl">Knife Chance</div></div>`;}
+  input.addEventListener('input',update);update();
+}
+function initEVCalc(){
+  const ci=document.getElementById('ev-case-price'),ki=document.getElementById('ev-key-price'),r=document.getElementById('ev-results');
+  if(!ci||!ki||!r)return;
+  function update(){const cp=parseFloat(ci.value)||0,kp=parseFloat(ki.value)||0,t=cp+kp;if(t<=0){r.innerHTML='<p style="color:var(--text2);text-align:center">Enter prices above</p>';return;}const av=t*0.35,ev=av-t,roi=((av/t-1)*100).toFixed(1);r.innerHTML=`<div class="result-item"><div class="val">$${t.toFixed(2)}</div><div class="lbl">Cost Per Open</div></div><div class="result-item"><div class="val">$${av.toFixed(2)}</div><div class="lbl">Avg Return</div></div><div class="result-item red"><div class="val">$${ev.toFixed(2)}</div><div class="lbl">Expected Value</div></div><div class="result-item red"><div class="val">${roi}%</div><div class="lbl">ROI</div></div>`;}
+  ci.addEventListener('input',update);ki.addEventListener('input',update);update();
+}
+document.addEventListener('DOMContentLoaded',function(){initCalc();initEVCalc();});
+</script>

@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import Calculator from '../../components/Calculator.astro';
+import { CASES, ODDS, knifeProb, expected, faqSchema, breadcrumbSchema } from '../../lib/data';
+
+export function getStaticPaths() {
+  return CASES.map(c => ({ params: { slug: c.slug }, props: { c } }));
+}
+
+const { c } = Astro.props;
+const faqs: [string, string][] = [
+  [`What are the odds in ${c.name}?`, `${c.name} uses the standard CS2 drop rates: 79.92% Mil-Spec, 15.98% Restricted, 3.20% Classified, 0.64% Covert, and 0.26% knife/gloves.`],
+  [`What is the chance of a knife in ${c.name}?`, `The chance of a knife or gloves from ${c.name} is 0.26% per case opening, the same as every other CS2 case.`],
+  [`Is ${c.name} worth opening?`, `Like all CS2 cases, the expected value of opening ${c.name} is negative. On average you receive back roughly 30-40% of the opening cost. Individual results vary widely.`],
+];
+const probCounts = [10, 50, 100, 500];
+const otherCases = CASES.filter(x => x.slug !== c.slug).slice(0, 10);
+---
+<Base title={`${c.name} Odds — CS2 Drop Rates, Knife Chance & Calculator`} description={`${c.name} odds and drop rates. 0.26% knife chance, 0.64% covert, 3.20% classified. Calculate probability for any number of cases.`} canonical={`/case/${c.slug}/`} extraHead={`<script type="application/ld+json">${faqSchema(faqs)}</script>`}>
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><a href="/case-odds/">Case Odds</a><span>›</span><span>{c.name}</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Case Odds', '/case-odds/'], [c.name]])}</script>`} />
+
+<h1>{c.name} Odds</h1>
+<p>The {c.name} was released in {c.year} and uses the standard CS2 drop rates shared by all weapon cases. Below you will find the complete odds breakdown, probability tables, a calculator, and frequently asked questions.</p>
+
+<h2>{c.name} Drop Rates</h2>
+<table class="odds-table">
+<thead><tr><th>Rarity</th><th>Probability</th><th>Odds</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec (Blue)</td><td>79.92%</td><td>1 in 1.25</td></tr>
+<tr><td class="rarity-restricted">Restricted (Purple)</td><td>15.98%</td><td>1 in 6.26</td></tr>
+<tr><td class="rarity-classified">Classified (Pink)</td><td>3.20%</td><td>1 in 31.25</td></tr>
+<tr><td class="rarity-covert">Covert (Red)</td><td>0.64%</td><td>1 in 156.25</td></tr>
+<tr><td class="rarity-gold">Exceedingly Rare (Gold)</td><td>0.26%</td><td>1 in 384.6</td></tr>
+</tbody></table>
+
+<h2>{c.name} Knife Probability</h2>
+<p>The chance of receiving a knife or gloves from the {c.name} is exactly 0.26% per opening. On average, you would need to open approximately 385 {c.name} cases to receive one knife drop. The probability of getting at least one knife across different numbers of cases is shown below.</p>
+<table><thead><tr><th>Cases</th><th>Knife Chance</th><th>No Knife</th><th>Expected Coverts</th></tr></thead>
+<tbody>{probCounts.map(n => <tr><td>{n}</td><td>{knifeProb(n).toFixed(2)}%</td><td>{(100 - knifeProb(n)).toFixed(2)}%</td><td>{expected(n, ODDS.covert)}</td></tr>)}</tbody></table>
+
+<h2>{c.name} Calculator</h2>
+<p>Enter the number of {c.name} cases you plan to open to see expected drops across all rarities:</p>
+<Calculator type="odds" />
+
+<h2>{c.name} Expected Value</h2>
+<p>The expected return from opening {c.name} depends on current market prices for the skins it contains. Use our <a href={`/expected-value/${c.slug}/`}>expected value calculator for {c.name}</a> to compute the precise EV based on current case and key prices.</p>
+
+<h2>Is {c.name} Worth Opening?</h2>
+<p>From a pure expected value perspective, no CS2 case is profitable to open on average. The {c.name} follows this pattern. The expected return is approximately 30-40% of the cost of opening. However, the {c.name} contains some desirable skins that hold value well, which can make individual results highly variable. The possibility of receiving a high-value knife or rare pattern means some players will profit significantly while the majority will not.</p>
+<p>If you choose to open {c.name} cases, do so for entertainment rather than as an investment strategy. Set a budget you are comfortable losing entirely, as that is the most likely outcome from a mathematical perspective.</p>
+
+<h2>Frequently Asked Questions</h2>
+{faqs.map(f => <div class="faq-item"><h3>{f[0]}</h3><p>{f[1]}</p></div>)}
+
+<h2>Other Cases</h2>
+<div class="link-grid">
+{otherCases.map(x => <a href={`/case/${x.slug}/`}>{x.name} Odds</a>)}
+</div>
+
+<h2>More Resources</h2>
+<div class="link-grid">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

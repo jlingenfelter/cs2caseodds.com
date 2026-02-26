@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import { KNIFE_COUNTS, knifeProb, expected, ODDS, breadcrumbSchema } from '../lib/data';
+---
+<Base title="CS2 Knife Calculator — Knife Probability by Cases" description="Calculate your probability of getting a knife in any number of CS2 cases. Uses real 0.26% drop rate." canonical="/knife-calculator/" currentNav="/case-calculator/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>Knife Calculator</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Knife Calculator']])}</script>`} />
+
+<h1>CS2 Knife Calculator — Knife Probability by Cases</h1>
+<p>Calculate your probability of getting a knife in any number of CS2 cases. Uses real 0.26% drop rate.</p>
+
+<Calculator type="odds" />
+
+<h2>Knife Probability Formula</h2>
+<p>P(at least one knife) = 1 - (1 - 0.0026)^N, where N is the number of cases opened.</p>
+
+<table><thead><tr><th>Cases</th><th>Knife Chance</th><th>No Knife</th><th>Expected Coverts</th></tr></thead>
+<tbody>{KNIFE_COUNTS.map(n => <tr><td>{n}</td><td>{knifeProb(n).toFixed(2)}%</td><td>{(100 - knifeProb(n)).toFixed(2)}%</td><td>{expected(n, ODDS.covert)}</td></tr>)}</tbody></table>
+
+<div class="link-grid">
+{KNIFE_COUNTS.map(n => <a href={`/knife-chance-${n}-cases/`}>{n} cases</a>)}
+</div>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

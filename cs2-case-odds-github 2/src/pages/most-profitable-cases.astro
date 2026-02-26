@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import { CASES, breadcrumbSchema } from '../lib/data';
+---
+<Base title="Most Profitable CS2 Cases — EV Ranked" description="Find the most profitable CS2 cases to open based on expected value analysis and current market prices." canonical="/most-profitable-cases/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>Most Profitable Cases</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Most Profitable Cases']])}</script>`} />
+
+<h1>Most Profitable CS2 Cases</h1>
+<p>Profitability in CS2 case opening is relative — all cases have negative expected value on average. This page identifies which cases have the least negative EV, making them the relatively best options if you choose to open cases.</p>
+
+<h2>Understanding Case Profitability</h2>
+<p>A case is considered relatively profitable when its average return is closer to the opening cost. Cases with high-value coverts and desirable knife finishes tend to have better EV because the rare drops carry more value. However, since these rare drops occur at the same 0.64% (covert) and 0.26% (knife) rates across all cases, the day-to-day experience of opening any case is dominated by the same 80% Mil-Spec drops.</p>
+
+<h2>Compare Case EV</h2>
+<div class="link-grid">
+{CASES.map(c => <a href={`/expected-value/${c.slug}/`}>{c.name} EV</a>)}
+</div>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

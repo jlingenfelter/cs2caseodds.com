@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Calculator from '../../components/Calculator.astro';
+import { CASES, ODDS, faqSchema, breadcrumbSchema } from '../../lib/data';
+
+export function getStaticPaths() {
+  return CASES.map(c => ({ params: { slug: c.slug }, props: { c } }));
+}
+
+const { c } = Astro.props;
+const faqs: [string, string][] = [
+  [`Is ${c.name} profitable to open?`, `On average, no. Like all CS2 cases, the expected return from ${c.name} is approximately 30-40% of the opening cost. Individual results vary widely due to rare high-value drops.`],
+  [`What is the expected return of ${c.name}?`, `The expected return depends on current skin prices. Use the calculator above to compute EV based on current case and key prices.`],
+];
+const otherCases = CASES.filter(x => x.slug !== c.slug).slice(0, 6);
+---
+<Base title={`${c.name} Expected Value — Is It Worth Opening?`} description={`Calculate the expected value of opening ${c.name}. See average return, profit/loss, and ROI based on current prices.`} canonical={`/expected-value/${c.slug}/`} currentNav="/expected-value/" extraHead={`<script type="application/ld+json">${faqSchema(faqs)}</script>`}>
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><a href="/expected-value/">Expected Value</a><span>›</span><span>{c.name}</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Expected Value', '/expected-value/'], [c.name]])}</script>`} />
+
+<h1>{c.name} Expected Value</h1>
+<p>Calculate whether the {c.name} is worth opening based on current market prices. Enter the case price and key price below to see the expected return, profit or loss, and ROI percentage.</p>
+
+<Calculator type="ev" />
+
+<h2>Understanding {c.name} EV</h2>
+<p>The expected value of the {c.name} depends on the current market prices of all skins it contains, weighted by their drop probabilities. Since approximately 80% of drops are Mil-Spec items worth very little, the EV is heavily influenced by the value of the rarer items — particularly the covert and knife/gloves tier.</p>
+<p>When calculating EV, remember that the total cost per opening includes both the case price and the key price ($2.49). Even if a case sells for $0.03 on the Steam Market, the total opening cost is still $2.52, making the effective EV calculation require a relatively high average return to break even.</p>
+
+<h2>{c.name} Drop Rates</h2>
+<table class="odds-table">
+<thead><tr><th>Rarity</th><th>Probability</th><th>Odds</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec (Blue)</td><td>79.92%</td><td>1 in 1.25</td></tr>
+<tr><td class="rarity-restricted">Restricted (Purple)</td><td>15.98%</td><td>1 in 6.26</td></tr>
+<tr><td class="rarity-classified">Classified (Pink)</td><td>3.20%</td><td>1 in 31.25</td></tr>
+<tr><td class="rarity-covert">Covert (Red)</td><td>0.64%</td><td>1 in 156.25</td></tr>
+<tr><td class="rarity-gold">Exceedingly Rare (Gold)</td><td>0.26%</td><td>1 in 384.6</td></tr>
+</tbody></table>
+
+<h2>Expected Drops per 100 Cases</h2>
+<table><thead><tr><th>Rarity</th><th>Expected in 100 Cases</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec</td><td>~80 items</td></tr>
+<tr><td class="rarity-restricted">Restricted</td><td>~16 items</td></tr>
+<tr><td class="rarity-classified">Classified</td><td>~3.2 items</td></tr>
+<tr><td class="rarity-covert">Covert</td><td>~0.64 items</td></tr>
+<tr><td class="rarity-gold">Knife/Gloves</td><td>~0.26 items</td></tr>
+</tbody></table>
+
+<h2>Frequently Asked Questions</h2>
+{faqs.map(f => <div class="faq-item"><h3>{f[0]}</h3><p>{f[1]}</p></div>)}
+
+<h2>Other Case EV Pages</h2>
+<div class="link-grid">
+{otherCases.map(x => <a href={`/expected-value/${x.slug}/`}>{x.name} EV</a>)}
+</div>
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

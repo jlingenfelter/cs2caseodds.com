@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import { CASES, breadcrumbSchema } from '../lib/data';
+---
+<Base title="CS2 Case Odds — Complete Drop Rate Guide for Every Rarity" description="Complete CS2 case odds guide. Exact drop rates for Mil-Spec, Restricted, Classified, Covert, and knife/gloves. All cases use identical probabilities." canonical="/case-odds/" currentNav="/case-odds/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>Case Odds</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Case Odds']])}</script>`} />
+
+<h1>CS2 Case Odds — Complete Drop Rate Guide</h1>
+<p>Every CS2 case uses the same fixed drop rates. These probabilities are set by Valve and apply universally to all weapon cases regardless of their release date, price, or the skins they contain. Understanding these odds is essential for making informed decisions about case openings.</p>
+
+<table class="odds-table">
+<thead><tr><th>Rarity</th><th>Probability</th><th>Odds</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec (Blue)</td><td>79.92%</td><td>1 in 1.25</td></tr>
+<tr><td class="rarity-restricted">Restricted (Purple)</td><td>15.98%</td><td>1 in 6.26</td></tr>
+<tr><td class="rarity-classified">Classified (Pink)</td><td>3.20%</td><td>1 in 31.25</td></tr>
+<tr><td class="rarity-covert">Covert (Red)</td><td>0.64%</td><td>1 in 156.25</td></tr>
+<tr><td class="rarity-gold">Exceedingly Rare (Gold)</td><td>0.26%</td><td>1 in 384.6</td></tr>
+</tbody></table>
+
+<h2>How Drop Rates Work in CS2</h2>
+<p>CS2 uses a weighted random number generator to determine the rarity of each item you receive from a case. When you open a case, the system generates a random number and maps it to one of the five rarity tiers based on the probability weights listed above. The visual spinner animation you see is purely cosmetic and does not represent the actual selection process.</p>
+<p>These odds are consistent across all cases. Opening a Revolution Case, a Clutch Case, or any other weapon case gives you the exact same 0.26% chance of receiving a knife or pair of gloves. The only difference between cases is which specific skins are available within each rarity tier.</p>
+<p>Each case opening is statistically independent. The outcome of one opening has absolutely no influence on the next. There is no pity timer, no escalating odds, and no mechanism that rewards players who have opened many cases without receiving a rare item.</p>
+
+<h2>Rarity Tier Breakdown</h2>
+<h3>Mil-Spec (Blue) — 79.92%</h3>
+<p>Mil-Spec items make up the vast majority of case drops. With nearly 80% probability, most case openings will result in a blue-tier skin. These items typically have the lowest market value, often selling for less than the cost of a case key. Read more on our <a href="/milspec-odds/">Mil-Spec odds page</a>.</p>
+<h3>Restricted (Purple) — 15.98%</h3>
+<p>Restricted items drop roughly once every six cases. While more valuable than Mil-Spec, most Restricted skins still sell below key price. Certain popular skins in this tier can hold decent value. See our <a href="/restricted-odds/">Restricted odds page</a> for details.</p>
+<h3>Classified (Pink) — 3.20%</h3>
+<p>Classified items are the first rarity tier where individual skins commonly exceed key price. With a 3.20% drop rate, you can expect approximately one Classified per 31 cases. These drops often generate excitement but should not be relied upon for profit. Visit our <a href="/classified-odds/">Classified odds page</a>.</p>
+<h3>Covert (Red) — 0.64%</h3>
+<p>Covert items drop once per approximately 156 cases. These are the highest-tier weapon skins and frequently sell for significant amounts on the Steam Market. StatTrak versions of Covert skins are especially valuable. Learn more on our <a href="/covert-odds/">Covert odds page</a>.</p>
+<h3>Exceedingly Rare (Gold) — 0.26%</h3>
+<p>The gold tier contains knives and gloves. At 0.26% probability, these items drop roughly once per 385 cases. They represent the most valuable possible drops and are the primary reason many players open cases. See our comprehensive <a href="/knife-odds/">knife odds analysis</a>.</p>
+
+<h2>All CS2 Cases</h2>
+<div class="link-grid">
+{CASES.map(c => <a href={`/case/${c.slug}/`}>{c.name}</a>)}
+</div>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import { ODDS, CASES, SPECIFIC_CALC_COUNTS, knifeProb, expected, breadcrumbSchema } from '../lib/data';
+
+export function getStaticPaths() {
+  return SPECIFIC_CALC_COUNTS.map(n => ({
+    params: { calcCount: `${n}-cases` },
+    props: { n }
+  }));
+}
+
+const { n } = Astro.props;
+const prob = knifeProb(n);
+---
+<Base title={`CS2 Case Calculator — ${n} Cases`} description={`Calculate expected drops and knife probability for ${n} CS2 case openings. ${prob.toFixed(2)}% knife chance.`} canonical={`/${n}-cases/`} currentNav="/case-calculator/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><a href="/case-calculator/">Calculator</a><span>›</span><span>{n} Cases</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Calculator', '/case-calculator/'], [`${n} Cases`]])}</script>`} />
+
+<h1>CS2 Case Calculator — {n} Cases</h1>
+<p>Calculate expected drops and knife probability for {n} CS2 case openings. {prob.toFixed(2)}% knife chance.</p>
+
+<Calculator type="odds" />
+
+<h2>Expected Results from {n} Cases</h2>
+<table><thead><tr><th>Rarity</th><th>Expected Count</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec</td><td>{expected(n, ODDS.milspec)}</td></tr>
+<tr><td class="rarity-restricted">Restricted</td><td>{expected(n, ODDS.restricted)}</td></tr>
+<tr><td class="rarity-classified">Classified</td><td>{expected(n, ODDS.classified)}</td></tr>
+<tr><td class="rarity-covert">Covert</td><td>{expected(n, ODDS.covert)}</td></tr>
+<tr><td class="rarity-gold">Knife/Gloves</td><td>{expected(n, ODDS.gold)}</td></tr>
+</tbody></table>
+
+<div class="stat-row">
+<div class="stat-card"><div class="num rarity-gold">{prob.toFixed(2)}%</div><div class="desc">Knife Chance in {n}</div></div>
+<div class="stat-card"><div class="num">{(100 - prob).toFixed(2)}%</div><div class="desc">No Knife in {n}</div></div>
+</div>
+
+<p>Opening {n} cases gives you a {prob.toFixed(2)}% cumulative probability of receiving at least one knife or pair of gloves. {prob > 50 ? `While the odds are in your favour, there is still a significant ${(100-prob).toFixed(2)}% chance of no knife.` : 'You are more likely to not receive a knife than to receive one.'}</p>
+
+<div class="link-grid">
+{CASES.slice(0, 10).map(c => <a href={`/case/${c.slug}/`}>{c.name} Odds</a>)}
+</div>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

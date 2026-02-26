@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import { CASES, breadcrumbSchema } from '../lib/data';
+---
+<Base title="CS2 Case Comparison — Compare Drop Rates and Value" description="Compare CS2 cases side by side. All cases share the same drop rates but differ in skin value and expected returns." canonical="/case-comparison/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>Case Comparison</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Case Comparison']])}</script>`} />
+
+<h1>CS2 Case Comparison</h1>
+<p>All CS2 weapon cases share identical drop rate probabilities. The difference between cases lies in the specific skins they contain and the market value of those skins. This page helps you compare cases to make informed decisions.</p>
+
+<h2>All Cases Share These Odds</h2>
+<table class="odds-table">
+<thead><tr><th>Rarity</th><th>Probability</th><th>Odds</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec (Blue)</td><td>79.92%</td><td>1 in 1.25</td></tr>
+<tr><td class="rarity-restricted">Restricted (Purple)</td><td>15.98%</td><td>1 in 6.26</td></tr>
+<tr><td class="rarity-classified">Classified (Pink)</td><td>3.20%</td><td>1 in 31.25</td></tr>
+<tr><td class="rarity-covert">Covert (Red)</td><td>0.64%</td><td>1 in 156.25</td></tr>
+<tr><td class="rarity-gold">Exceedingly Rare (Gold)</td><td>0.26%</td><td>1 in 384.6</td></tr>
+</tbody></table>
+
+<h2>Key Comparison Factors</h2>
+<p>Since drop rates are identical, the factors that differentiate cases are: the market value of covert skins, the value of classified skins, the desirability of knife finishes available, the case price on the Steam Market, and the overall demand for the case contents. Newer cases tend to have lower case prices due to higher supply, while discontinued or rare cases command premium prices.</p>
+
+<h2>All CS2 Cases</h2>
+<div class="link-grid">
+{CASES.map(c => <a href={`/case/${c.slug}/`}>{c.name} ({c.year})</a>)}
+</div>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

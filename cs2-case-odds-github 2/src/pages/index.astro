@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import { ODDS, CASES, knifeProb, expected, faqSchema } from '../lib/data';
+
+const faqs: [string, string][] = [
+  ['What are the odds of getting a knife in CS2?', 'The odds of getting a knife or gloves from any CS2 case are 0.26%, which is approximately 1 in 384.6 cases.'],
+  ['What are CS2 case odds?', 'All CS2 cases share the same drop rates: 79.92% Mil-Spec, 15.98% Restricted, 3.20% Classified, 0.64% Covert, and 0.26% Exceedingly Rare (knife/gloves).'],
+  ['How many cases for a knife in CS2?', 'On average, you need to open approximately 385 cases to get one knife drop, though due to probability each case is an independent event.'],
+];
+const counts = [10, 25, 50, 100, 250, 500, 1000];
+---
+<Base title="CS2 Case Odds Calculator — Real Drop Rates for Every Case" description="Free CS2 case odds calculator. See exact drop rates for knives, coverts, and all rarities. Calculate probability across any number of cases." canonical="/" currentNav="/" extraHead={`<script type="application/ld+json">${faqSchema(faqs)}</script>`}>
+
+<div class="hero">
+<h1>CS2 Case Odds Calculator</h1>
+<p>Calculate exact drop probabilities for every CS2 case. See your real chances of getting a knife, covert, classified, or any rarity across any number of cases.</p>
+</div>
+
+<Calculator type="odds" />
+
+<div class="stat-row">
+<div class="stat-card"><div class="num rarity-gold">0.26%</div><div class="desc">Knife/Gloves</div></div>
+<div class="stat-card"><div class="num rarity-covert">0.64%</div><div class="desc">Covert</div></div>
+<div class="stat-card"><div class="num rarity-classified">3.20%</div><div class="desc">Classified</div></div>
+<div class="stat-card"><div class="num" style="color:var(--accent)">384.6</div><div class="desc">Cases per Knife</div></div>
+</div>
+
+<h2>CS2 Case Drop Rates</h2>
+<p>Every CS2 case uses identical rarity drop rates set by Valve. These odds apply to all cases regardless of release date, price, or contents. The probabilities are fixed and do not change based on how many cases you have opened previously. Each case opening is an independent event.</p>
+<table class="odds-table">
+<thead><tr><th>Rarity</th><th>Probability</th><th>Odds</th></tr></thead>
+<tbody>
+<tr><td class="rarity-milspec">Mil-Spec (Blue)</td><td>79.92%</td><td>1 in 1.25</td></tr>
+<tr><td class="rarity-restricted">Restricted (Purple)</td><td>15.98%</td><td>1 in 6.26</td></tr>
+<tr><td class="rarity-classified">Classified (Pink)</td><td>3.20%</td><td>1 in 31.25</td></tr>
+<tr><td class="rarity-covert">Covert (Red)</td><td>0.64%</td><td>1 in 156.25</td></tr>
+<tr><td class="rarity-gold">Exceedingly Rare (Gold)</td><td>0.26%</td><td>1 in 384.6</td></tr>
+</tbody></table>
+<p>These odds mean that for every 10,000 cases opened across all players, approximately 7,992 will contain a Mil-Spec item, 1,598 a Restricted, 320 a Classified, 64 a Covert, and 26 a knife or pair of gloves. Individual results vary significantly due to the nature of probability.</p>
+
+<h2>How CS2 Case Probability Works</h2>
+<p>CS2 case openings follow a Bernoulli distribution. Each opening is independent, meaning previous results have no effect on future outcomes. There is no pity system, no streak protection, and no hidden mechanics that increase your odds over time. Opening 384 cases without getting a knife does not increase the probability of getting one on the 385th case.</p>
+<p>The probability of getting at least one knife in N cases is calculated using the complement formula: P = 1 - (1 - 0.0026)^N. This means opening 100 cases gives you approximately a <a href="/knife-chance-100-cases/">22.87% chance</a> of getting at least one knife, while opening <a href="/knife-chance-500-cases/">500 cases</a> gives you roughly a 72.73% chance. Even opening <a href="/knife-chance-1000-cases/">1,000 cases</a> does not guarantee a knife — the probability is about 92.56%.</p>
+
+<h2>Understanding Expected Value</h2>
+<p>The expected value of opening CS2 cases is consistently negative. On average, players receive back approximately 30-40% of the cost of opening a case (case price plus key price combined). This means for every dollar spent, you can expect to receive roughly $0.35 in return value on average. High-value drops like knives, rare patterns, and StatTrak coverts can dramatically shift individual outcomes, but over large sample sizes the expected loss converges toward the mean.</p>
+<p>Visit our <a href="/expected-value/">expected value calculator</a> to calculate the precise EV for any case based on current market prices.</p>
+
+<h2>Knife Probability by Number of Cases</h2>
+<table><thead><tr><th>Cases</th><th>Knife Chance</th><th>No Knife</th><th>Expected Coverts</th></tr></thead>
+<tbody>{counts.map(n => <tr><td>{n}</td><td>{knifeProb(n).toFixed(2)}%</td><td>{(100 - knifeProb(n)).toFixed(2)}%</td><td>{expected(n, ODDS.covert)}</td></tr>)}</tbody></table>
+<p>See the full breakdown on our <a href="/knife-odds/">knife odds page</a>, or use the <a href="/case-calculator/">calculator</a> for any custom number.</p>
+
+<h2>Browse Cases</h2>
+<p>View detailed odds, probability tables, and expected value for each individual CS2 case:</p>
+<div class="link-grid">
+{CASES.slice(0, 20).map(c => <a href={`/case/${c.slug}/`}>{c.name}</a>)}
+</div>
+<p style="margin-top:12px"><a href="/case-odds/">View all {CASES.length} cases →</a></p>
+
+<h2>Frequently Asked Questions</h2>
+{faqs.map(f => <div class="faq-item"><h3>{f[0]}</h3><p>{f[1]}</p></div>)}
+
+<div class="link-grid">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import { ODDS, KNIFE_COUNTS, knifeProb, expected, casesFor50, faqSchema, breadcrumbSchema } from '../lib/data';
+
+const faqs: [string, string][] = [
+  ['What is the chance of getting a knife in CS2?', 'The base probability is 0.26% per case, which equals approximately 1 in 384.6 cases.'],
+  ['How many cases for 50% knife chance?', `You need approximately ${casesFor50()} cases for a 50% cumulative probability of getting at least one knife.`],
+  ['Can you get a knife on first case?', 'Yes. Every case has an independent 0.26% chance. Your first case has the same odds as your thousandth.'],
+];
+const extCounts = [1, 5, 10, 25, 50, 100, 150, 200, 250, 300, 385, 500, 750, 1000];
+---
+<Base title="CS2 Knife Odds — Probability of Getting a Knife from Cases" description="What are the real odds of getting a knife in CS2? 0.26% per case. Calculate your exact probability across any number of cases." canonical="/knife-odds/" currentNav="/knife-odds/" extraHead={`<script type="application/ld+json">${faqSchema(faqs)}</script>`}>
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>Knife Odds</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Knife Odds']])}</script>`} />
+
+<h1>CS2 Knife Odds — Complete Probability Guide</h1>
+<p>The probability of receiving a knife or pair of gloves from any CS2 case is exactly 0.26%, which translates to approximately 1 in 384.6 cases. This page provides a complete analysis of knife drop probability across different numbers of case openings.</p>
+
+<div class="stat-row">
+<div class="stat-card"><div class="num rarity-gold">0.26%</div><div class="desc">Per Case</div></div>
+<div class="stat-card"><div class="num rarity-gold">1 in 385</div><div class="desc">Average</div></div>
+<div class="stat-card"><div class="num rarity-gold">{casesFor50()}</div><div class="desc">Cases for 50%</div></div>
+</div>
+
+<Calculator type="odds" />
+
+<h2>Knife Probability Table</h2>
+<p>The probability of getting at least one knife in N cases follows the formula: P = 1 - (1 - 0.0026)^N. This accounts for the cumulative probability across multiple independent trials.</p>
+<table><thead><tr><th>Cases</th><th>Knife Chance</th><th>No Knife</th><th>Expected Coverts</th></tr></thead>
+<tbody>{extCounts.map(n => <tr><td>{n}</td><td>{knifeProb(n).toFixed(2)}%</td><td>{(100 - knifeProb(n)).toFixed(2)}%</td><td>{expected(n, ODDS.covert)}</td></tr>)}</tbody></table>
+
+<h2>Understanding Knife Probability</h2>
+<p>Many players misunderstand how probability works with case openings. The statement that a knife drops once per 385 cases on average does not mean you are guaranteed a knife after opening 385 cases. It means that across a very large number of trials, the average number of cases between knife drops converges toward 385.</p>
+<p>After opening 385 cases, your cumulative probability of having received at least one knife is approximately 63.3%. This means roughly one in three players who open 385 cases will not have received a knife. Even after 1,000 cases, approximately 7.4% of players will still not have seen a knife drop.</p>
+<p>This is because each case opening is independent. The 385th case has exactly the same 0.26% probability as the first. There is no accumulation of luck, no hidden counter, and no pity system that guarantees a drop after a certain number of attempts.</p>
+
+<h2>Knife Probability by Case Count</h2>
+<div class="link-grid">
+{KNIFE_COUNTS.map(n => <a href={`/knife-chance-${n}-cases/`}>Knife chance in {n} cases →</a>)}
+</div>
+
+<h2>Frequently Asked Questions</h2>
+{faqs.map(f => <div class="faq-item"><h3>{f[0]}</h3><p>{f[1]}</p></div>)}
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>

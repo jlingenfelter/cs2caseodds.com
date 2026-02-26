@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Calculator from '../components/Calculator.astro';
+import { CASES, KNIFE_COUNTS, knifeProb, expected, ODDS, breadcrumbSchema } from '../lib/data';
+---
+<Base title="CS2 Case Calculator — Calculate Expected Drops" description="Free CS2 case odds calculator. Enter any number of cases to see expected drops across all rarities and knife probability." canonical="/case-calculator/" currentNav="/case-calculator/">
+
+<div class="breadcrumbs"><a href="/">Home</a><span>›</span><span>Calculator</span></div>
+<Fragment set:html={`<script type="application/ld+json">${breadcrumbSchema([['Home', '/'], ['Calculator']])}</script>`} />
+
+<h1>CS2 Case Calculator — Calculate Expected Drops</h1>
+<p>Free CS2 case odds calculator. Enter any number of cases to see expected drops across all rarities and knife probability.</p>
+
+<Calculator type="odds" />
+
+<h2>How the Calculator Works</h2>
+<p>This calculator uses the official CS2 drop rates to compute expected outcomes. Enter any number of cases and see the expected number of items at each rarity tier, plus your cumulative probability of receiving at least one knife.</p>
+<h2>Formula</h2>
+<p>Expected items = Number of cases × Drop rate. Knife probability = 1 - (1 - 0.0026)^N.</p>
+
+<div class="link-grid">
+{CASES.slice(0, 10).map(c => <a href={`/case/${c.slug}/`}>{c.name} Odds</a>)}
+</div>
+
+<div class="link-grid" style="margin-top:32px">
+<a href="/">Home</a><a href="/case-odds/">Case Odds Guide</a><a href="/knife-odds/">Knife Odds</a>
+<a href="/case-calculator/">Calculator</a><a href="/expected-value/">Expected Value</a>
+</div>
+</Base>
